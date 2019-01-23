@@ -16,9 +16,9 @@ Bleu=10,50,255
 Color=[Blanc, Bleu]
 
 #Variables globales
-global ListePoisson
+global ListePoisson, rencontre
 ListePoisson=[] #Liste des attibuts des poissons
-
+rencontre=[] #Liste
 
 
 
@@ -40,6 +40,16 @@ class Poisson:
         self.x = x #Coordonne x du poisson
         self.y = y #Coordonne y du poisson
         self.nombre = nombre #nombre du poisson
+
+    #deplace le poisson aleatoirement
+    #@deplacer.setter
+    def _set_deplacer(self):
+        self.x += random.randint(-1, 1) * EcartCase
+        self.y += random.randint(-1, 1) * EcartCase
+
+
+
+
 
 
 #Class Monde Creations de la grille et gestions de la grille
@@ -89,17 +99,22 @@ class Monde:
 
 
 #init grille ( taille x, taille y , nombre de poisson)
-Terrain = Monde(15,15 ,99)
+Terrain = Monde(15,15 ,102)
 #placement des poisson dans la grille
 Terrain.CréationPoisson()
 
-salut=True
+
+exit=True
+status=True
 while salut:
     Terrain.CréationMonde()
+
+    while status:
+        status = False
        
     for event in pygame.event.get(): # pour chaque evenement donner 
         if event.type == pygame.QUIT:
-            salut= False
+            exit= False
         pygame.display.update()
 pygame.quit()
 quit()
