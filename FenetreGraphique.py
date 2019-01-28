@@ -106,7 +106,7 @@ Terrain.CréationPoisson()
 
 exit=True
 status=True
-while salut:
+while exit:
     Terrain.CréationMonde()
 
     while status:
