@@ -7,7 +7,7 @@ from pygame.locals import *
 #----- VARIABLES -----#
 
 Size=Widght,height =800 , 630 #Taille de l'ecran en pixels
-tailleCase=40 #Taille d'une case en pixel
+tailleCase=((height-(2*10))/10) #Taille d'une case en pixel
 EcartCase=tailleCase + 2 #Taille d'une case + pixel entre les case. Permet de determiner le decalage entre la position de 2 cases
 
 #Couleurs
@@ -26,7 +26,7 @@ pygame.init() # initialisation fenetre
 
 
 
-font=pygame.font.Font(None, 30) # creation police d'ecriture
+font=pygame.font.Font(None, 40) # creation police d'ecriture
 
 #parametrage fenetre
 Display = pygame.display.set_mode((Size))
@@ -34,9 +34,11 @@ pygame.display.set_caption("poisson")
 
 
 
+
+
 #Class Poisson qui definit les poissons
 class Poisson:
-    def __init__(self,x,y, nombre):
+    def __init__(self,x,y,nombre):
         self.x = x #Coordonne x du poisson
         self.y = y #Coordonne y du poisson
         self.nombre = nombre #nombre du poisson
@@ -58,37 +60,36 @@ class Monde:
             for i in range(self.longueur):
                 pygame.draw.rect(Display,Color[0],(x,y,tailleCase,tailleCase))
                 x+=EcartCase
-                if x==630:
+                if x==(10*EcartCase):
                     x=0
-                    y+=42
+                    y+=EcartCase
 
         #Placement des poissons sur la grille
         for loop in range (self.NbsPoisson):
-            pygame.draw.rect(Display,Color[1],(ListePoisson[x].x,ListePoisson[x].y,40,40))
+            pygame.draw.rect(Display,Color[1],((ListePoisson[x].x)+2,(ListePoisson[x].y)+2,tailleCase-4,tailleCase-4))
             text = font.render(str(ListePoisson[x].nombre ),0,(0,0,0))
-            Display.blit(text, (ListePoisson[x].x,ListePoisson[x].y))
+            Display.blit(text,((ListePoisson[x].x+(tailleCase/2))-10,(ListePoisson[x].y+(tailleCase/2))-10))
             x+=1
 
 
     #Resulta: Creation des poisson au depart
     def CréationPoisson(self):
+        x,y = 0,0
         n=2
-        ListePoisson.append(Poisson((((random.randint(1,self.longueur)*EcartCase))-EcartCase),((random.randint(1,self.Largeur)*EcartCase)-EcartCase),n))
+        ListePoisson.append(Poisson((x),(y),n))
         for loop in range(self.NbsPoisson-1):
             nbs=0
-            ListePoisson.append(Poisson((((random.randint(1,self.longueur)*EcartCase))-EcartCase),((random.randint(1,self.Largeur)*EcartCase)-EcartCase),n))
+            ListePoisson.append(Poisson((x),(y),n))
+            x += EcartCase
+            if x == (10 * EcartCase):
+                x = 0
+                y += EcartCase
 
-            while(nbs-1!=(len(ListePoisson)-1)):
-                if ListePoisson[-1].x == ListePoisson[nbs-1].x and ListePoisson[-1].y == ListePoisson[nbs-1].y:
-                    ListePoisson[-1].x =(((random.randint(1,self.longueur)*EcartCase))-EcartCase)
-                    ListePoisson[-1].y = (((random.randint(1,self.Largeur)*EcartCase))-EcartCase)
-                    nbs=0
+
                     
-                nbs+=1
-            n+=1
 
 #init grille ( taille x, taille y , nombre de poisson)
-Terrain = Monde(15,15 ,102)
+Terrain = Monde(10,10 ,102)
 
 #placement des poissons dans la grille
 Terrain.CréationPoisson()
