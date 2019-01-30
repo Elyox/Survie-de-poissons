@@ -22,8 +22,6 @@ ListePoisson=[] #Liste des attibuts des poissons
 
 
 
-
-
 pygame.init() # initialisation fenetre
 
 
@@ -33,6 +31,8 @@ font=pygame.font.Font(None, 30) # creation police d'ecriture
 #parametrage fenetre
 Display = pygame.display.set_mode((Size))
 pygame.display.set_caption("poisson")
+
+
 
 #Class Poisson qui definit les poissons
 class Poisson:
@@ -61,6 +61,7 @@ class Monde:
                 if x==630:
                     x=0
                     y+=42
+
         #Placement des poissons sur la grille
         for loop in range (self.NbsPoisson):
             pygame.draw.rect(Display,Color[1],(ListePoisson[x].x,ListePoisson[x].y,40,40))
@@ -76,7 +77,7 @@ class Monde:
         for loop in range(self.NbsPoisson-1):
             nbs=0
             ListePoisson.append(Poisson((((random.randint(1,self.longueur)*EcartCase))-EcartCase),((random.randint(1,self.Largeur)*EcartCase)-EcartCase),n))
-        
+
             while(nbs-1!=(len(ListePoisson)-1)):
                 if ListePoisson[-1].x == ListePoisson[nbs-1].x and ListePoisson[-1].y == ListePoisson[nbs-1].y:
                     ListePoisson[-1].x =(((random.randint(1,self.longueur)*EcartCase))-EcartCase)
@@ -85,22 +86,21 @@ class Monde:
                     
                 nbs+=1
             n+=1
-           
-
 
 #init grille ( taille x, taille y , nombre de poisson)
-Terrain = Monde(15,15 ,99)
-#placement des poisson dans la grille
+Terrain = Monde(15,15 ,102)
+
+#placement des poissons dans la grille
 Terrain.CréationPoisson()
 
 salut=True
 while salut:
+    Display.fill((0, 0, 0))
     Terrain.CréationMonde()
-       
-    for event in pygame.event.get(): # pour chaque evenement donner 
+    for event in pygame.event.get(): # pour chaque evenement donner
         if event.type == pygame.QUIT:
             salut= False
-        pygame.display.update()
+    pygame.display.update()
 pygame.quit()
 quit()
 
