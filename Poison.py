@@ -15,6 +15,9 @@ class Cellule:
         self.poissons = []
         self.symbole = "P"
 
+
+
+
     def affichage(self):
         if len(self.poissons)==0:
             self.symbole= "-"
@@ -29,29 +32,41 @@ class Cellule:
         print("Je suis pelle")
 
 class Monde :
-    def __init__(self,taille , n):
-        self.taille = taille
-        self.nbPoissons = n
-        global grille
-        grille=[]
+    def __init__(self,cote):
+        self.cote = cote
+        self.nbPoissons = cote**2
+        global grilleCellule, listePoisson
+        grilleCellule=[]
+        listePoisson =[]
         k=0
-        for i in range(self.taille):
-            colonne = []
-            for j in range(self.taille):
-                colonne.append(Cellule(i,j))
-            grille.append(colonne)
+        for i in range(self.cote):
+            colonneCellule = []
+            for j in range(self.cote):
+                colonneCellule.append(Cellule(i, j))
+                listePoisson.append(Poisson(i, j, k+2))
+                print(listePoisson[k].nombre, end=", ")
+                k += 1
+            grilleCellule.append(colonneCellule)
+        print('\n')
+
+    def regulariserPoisson(self):
+        for i in listePoisson:
+            grilleCellule[i.x][i.y].poissons.append(i.nombre)
 
     def affichage(self):
-        for i in range(self.taille):
-            for j in range(self.taille):
-                grille[j][i].affichage()
-                print(grille[j][i].symbole , ",", end="")
+        for i in range(self.cote):
+            for j in range(self.cote):
+                grilleCellule[j][i].affichage()
+                print(grilleCellule[j][i].symbole , ",", end="")
             print("")
 
-Terrain = Monde(10,100)
+Terrain = Monde(4)
 Terrain.affichage()
 
-print("_________________")
+print("_________________\n")
+
+
+Terrain.regulariserPoisson()
 
 Terrain.affichage()
 
