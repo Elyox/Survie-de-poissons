@@ -1,67 +1,57 @@
 import random
 
 
-
 class Poisson:
     def __init__(self,x,y, nombre):
         self.x = x
         self.y = y
         self.nombre = nombre
-           
-        
-        
-class Monde:
-    def __init__(self ,longueur ,Largeur,NbsPoisson):
-        self.longueur = longueur
-        self.Largeur = Largeur
-        self.NbsPoisson = NbsPoisson
-        
-    def CreationMonde(self):
+
+
+class Cellule:
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+        self.poissons = []
+        self.symbole = "P"
+
+    def affichage(self):
+        if len(self.poissons)==0:
+            self.symbole= "-"
+        else :
+            self.symbole="P"
+
+
+
+    def nbspoisson(self):
+
+
+        print("Je suis pelle")
+
+class Monde :
+    def __init__(self,taille , n):
+        self.taille = taille
+        self.nbPoissons = n
         global grille
         grille=[]
-        for j in range(self.Largeur):
-            Colonne = ["" for i in range(self.longueur)]
-            grille.append(Colonne)
+        k=0
+        for i in range(self.taille):
+            colonne = []
+            for j in range(self.taille):
+                colonne.append(Cellule(i,j))
+            grille.append(colonne)
 
-            
-    
-    def CreationPoisson (self):
-        global listepoison
-        for loop in range(self.NbsPoisson):
-            x=random.randint(0,14)
-            y=random.randint(0,14)
-            n=0
-            grille[y][x] = "P"
-            n+=1
-            
-    
-            
+    def affichage(self):
+        for i in range(self.taille):
+            for j in range(self.taille):
+                grille[j][i].affichage()
+                print(grille[j][i].symbole , ",", end="")
+            print("")
 
-    def AfficherMonde(self):
-        n=0
-        for loop in range(self.Largeur):
-            print(grille[n])
-            n+=1
-        for loop in range(98):
-            x=poison[n][1]
-            y=listepoisso
+Terrain = Monde(10,100)
+Terrain.affichage()
 
+print("_________________")
 
-
-
-Espace = Monde(15,15,98)
-Espace.CreationMonde()
-Espace.CreationPoisson()
-Espace.AfficherMonde()
-
-print(Espace.NbsPoisson)
-    
-    
-    
-        
-        
-        
-
-
-
+Terrain.affichage()
 
