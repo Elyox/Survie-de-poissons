@@ -1,5 +1,9 @@
 import random
 
+NombreListe=[i for i in range(2,102)]
+ListePoisson=[]
+global nombre
+
 
 class Poisson:
     def __init__(self,x,y, nombre):
@@ -12,20 +16,10 @@ class Cellule:
     def __init__(self,x,y):
         self.x=x
         self.y=y
-        self.poissons = []
-        self.symbole = "P"
-
-    def affichage(self):
-        if len(self.poissons)==0:
-            self.symbole= "-"
-        else :
-            self.symbole="P"
-
+        self.poissons = [1]
 
 
     def nbspoisson(self):
-
-
         print("Je suis pelle")
 
 class Monde :
@@ -39,19 +33,36 @@ class Monde :
             colonne = []
             for j in range(self.taille):
                 colonne.append(Cellule(i,j))
+
             grille.append(colonne)
 
+    def CreationPoisson(self):
+        for a in range (self.taille):
+            for b in range (self.taille):
+                nombre = random.choice(NombreListe)
+                ListePoisson.append(Poisson(a,b,nombre))
+                NombreListe.remove(nombre)
+
+
+    def Deplacer(self):
+        print("je me deplace")
+
+
     def affichage(self):
+        x=0
         for i in range(self.taille):
             for j in range(self.taille):
-                grille[j][i].affichage()
-                print(grille[j][i].symbole , ",", end="")
+                print(ListePoisson[x].nombre , ",", end="")
+                x+=1
             print("")
 
+
 Terrain = Monde(10,100)
+Terrain.CreationPoisson()
 Terrain.affichage()
 
 print("_________________")
+
 
 Terrain.affichage()
 
