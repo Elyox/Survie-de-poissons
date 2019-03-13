@@ -1,5 +1,8 @@
 import random
 
+NombreListe=[i for i in range(2,102)]
+listePoisson = []
+
 
 class Poisson:
     def __init__(self,x,y, nombre):
@@ -10,63 +13,56 @@ class Poisson:
 
 class Cellule:
     def __init__(self,x,y):
+        global nombre
+        nombre= random.choice(NombreListe)
         self.x=x
         self.y=y
-        self.poissons = []
-        self.symbole = "P"
+        self.poissons = [Poisson(self.x , self.y,nombre)]
+        self.symbole = str(nombre)
 
-
-
-
-    def affichage(self):
-        if len(self.poissons)==0:
-            self.symbole= "-"
-        else :
-            self.symbole="P"
+    def recupPoisson(self):
+        for i in listePoisson:
+            if i.x == self.x and i.y == self.y:
+                self.poissons.append(i)
 
 
 
     def nbspoisson(self):
-
-
         print("Je suis pelle")
 
 class Monde :
-    def __init__(self,cote):
-        self.cote = cote
-        self.nbPoissons = cote**2
-        global grilleCellule, listePoisson
-        grilleCellule=[]
-        listePoisson =[]
+    def __init__(self,taille , n):
+        self.taille = taille
+        self.nbPoissons = n
+        global grille, listePoisson
+        grille=[]
         k=0
-        for i in range(self.cote):
-            colonneCellule = []
-            for j in range(self.cote):
-                colonneCellule.append(Cellule(i, j))
-                listePoisson.append(Poisson(i, j, k+2))
-                print(listePoisson[k].nombre, end=", ")
-                k += 1
-            grilleCellule.append(colonneCellule)
-        print('\n')
+        for i in range(self.taille):
+            colonne = []
+            for j in range(self.taille):
+                colonne.append(Cellule(i,j))
+                NombreListe.remove(nombre)
+                print(NombreListe)
+            grille.append(colonne)
 
-    def regulariserPoisson(self):
+    def creationPoisson(self):
+        for i in range(self.nbPoissons):
+
+
+    def deplacer(self):
         for i in listePoisson:
-            grilleCellule[i.x][i.y].poissons.append(i.nombre)
+            i.x += (random.randint(-1, 1)) % 10
+            i.y += (random.randint(-1, 1)) % 10
 
-    def affichage(self):
-        for i in range(self.cote):
-            for j in range(self.cote):
-                grilleCellule[j][i].affichage()
-                print(grilleCellule[j][i].symbole , ",", end="")
-            print("")
 
-Terrain = Monde(4)
+Terrain = Monde(10,100)
 Terrain.affichage()
 
 print("_________________\n")
 
 
-Terrain.regulariserPoisson()
+
+
 
 Terrain.affichage()
 
