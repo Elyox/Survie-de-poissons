@@ -1,4 +1,5 @@
 import random
+from resize import console_resize
 from time import sleep
 from tabulate import tabulate
 
@@ -69,22 +70,9 @@ class Monde:
 
     def affichage(self):
         tableauMonde = []
-        header = [
-            '//',
-            '\033[32m0\033[0m',
-            '\033[32m1\033[0m',
-            '\033[32m2\033[0m',
-            '\033[32m3\033[0m',
-            '\033[32m4\033[0m',
-            '\033[32m5\033[0m',
-            '\033[32m6\033[0m',
-            '\033[32m7\033[0m',
-            '\033[32m8\033[0m',
-            '\033[32m9\033[0m'
-        ]
         # Pour chaque Colone
         for i in range(self.taille):
-            listCol = ['\033[32m'+str(i)+'\033[0m']
+            listCol = []
             # Pour chaque Case
             for j in range(self.taille):
                 placeContainer = ''
@@ -93,7 +81,7 @@ class Monde:
                     if p.x == j and p.y == i:
                         listPoissCase.append(p.nombre)
                 if listPoissCase == []:
-                    placeContainer += '\033[35m_\033[0m'
+                    placeContainer += '_'
                 else:
                     listPoissCase = sorted(listPoissCase)
                     for chfr in listPoissCase:
@@ -104,11 +92,10 @@ class Monde:
                 listCol.append(placeContainer)
             tableauMonde.append(listCol)
 
-        print(tabulate(tableauMonde, header, tablefmt='grid', numalign='left'))
-        print('Morts : ', self.nombreMorts, '\n')
+        print(tabulate(tableauMonde, tablefmt='fancy_grid', numalign='left'))
+        print('Morts : ', self.nombreMorts)
 
     def bataille(self):
-        print('ko :')
         ko = []
         for i in range(self.taille):
             for j in range(self.taille):
@@ -126,7 +113,7 @@ class Monde:
                                 koTemp.append(m)
                                 ko.append(m)
                                 self.mortsTotaux.append(m)
-        print('Total :', len(ko), '||', ko, '\n')
+        print('Ko ce tour :', len(ko), '||', ko, '\n')
 
         # Tuer les poissons
         for i in ko:
@@ -135,24 +122,30 @@ class Monde:
 
 
 # **** FONCTIONS ****
-def cls(): print('\n' * 10)
+def cls(): print('\n' * 30)
 
 
 # **** CODE ****
+console_resize(150)
+
 Terrain = Monde(10, 100)
 Terrain.affichage()
 
-print("DEPART\n_________________\n")
-sleep(1)
+print("_________________\n")
+# sleep(1)
+input('press enter to start')
 
 while rep < 5:
+    sleep(0.1)
     cls()
+    sleep(0.1)
     rep += 1
     print('/\\/\\/\\/\\/\\/\\/\\/ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\/')
     Terrain.deplacer()
     Terrain.bataille()
     Terrain.affichage()
-    rep += 1
-    sleep(3)
+    sleep(1)
 
-print('Liste morts : ', Terrain.mortsTotaux, '\nNombre de tours : ', rep)
+print('Liste morts : ', Terrain.mortsTotaux, '\nNombre de tours : ', rep, '\n')
+
+input('press enter to exit\n')
