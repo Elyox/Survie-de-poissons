@@ -3,10 +3,12 @@ from time import sleep
 from tabulate import tabulate  # Affichage du tableau
 
 
-# **** VARIABLES ****
+#  ██████ ██       █████  ███████ ███████ ███████ ███████
+# ██      ██      ██   ██ ██      ██      ██      ██
+# ██      ██      ███████ ███████ ███████ █████   ███████
+# ██      ██      ██   ██      ██      ██ ██           ██
+#  ██████ ███████ ██   ██ ███████ ███████ ███████ ███████
 
-
-# **** CLASSES ****
 class Poisson:  # La classe qui definit les Poisson
     def __init__(self, x, y, nombre):
         self.x = x
@@ -25,6 +27,12 @@ class Cellule:  # Restes de Marco
     def __init__(self):
         print("Je suis pelle")
 
+
+# ███    ███  ██████  ███    ██ ██████  ███████
+# ████  ████ ██    ██ ████   ██ ██   ██ ██
+# ██ ████ ██ ██    ██ ██ ██  ██ ██   ██ █████
+# ██  ██  ██ ██    ██ ██  ██ ██ ██   ██ ██
+# ██      ██  ██████  ██   ████ ██████  ███████
 
 class Monde:  # la superclasse qui definit le Monde
     def __init__(self, taille):
@@ -128,7 +136,12 @@ class Monde:  # la superclasse qui definit le Monde
         return listeNum, self.mortsTotaux
 
 
-# **** FONCTIONS ****
+# ███████  ██████  ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
+# ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
+# █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████
+# ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
+# ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
+
 def cls(): print('\n' * 10)
 
 
