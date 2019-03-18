@@ -1,7 +1,7 @@
 import random
-from resize import console_resize
+from resize import console_resize  # Fonction pour redimentionner le terminal
 from time import sleep
-from tabulate import tabulate
+from tabulate import tabulate  # Affichage du tableau
 
 
 # **** VARIABLES ****

@@ -1,158 +1,165 @@
 import random
 from time import sleep
-from tabulate import tabulate
+from tabulate import tabulate  # Affichage du tableau
 
 
 # **** VARIABLES ****
-global nombre, nombreMorts
-NombreListe = [i for i in range(2, 102)]
-ListePoisson = []
-rep = 0
 
 
 # **** CLASSES ****
-class Poisson:
+class Poisson:  # La classe qui definit les Poisson
     def __init__(self, x, y, nombre):
         self.x = x
         self.y = y
         self.nombre = nombre
 
-    def __lt__(self, other):
+    # Definit comment comparer les Poissons entre eux
+    def __lt__(self, other):  # less than
         return self.nombre < other.nombre
 
-    def __gt__(self, other):
+    def __gt__(self, other):  # greater than
         return self.nombre > other.nombre
 
 
-class Cellule:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.poissons = []
-
-    def recupPoisson(self):
-        for i in ListePoisson:
-            if i.x == self.x and i.y == self.y:
-                self.poissons.append(i)
-
-    def nbspoisson(self):
+class Cellule:  # Restes de Marco
+    def __init__(self):
         print("Je suis pelle")
 
 
-class Monde:
-    def __init__(self, taille, n):
-        self.taille = taille
-        self.nbPoissons = n
-        self.nombreMorts = 0
-        self.mortsTotaux = []
-        global grille
-        grille = []
-        for i in range(self.taille):
-            colonne = []
-            for j in range(self.taille):
-                colonne.append(Cellule(i, j))
-            grille.append(colonne)
-
+class Monde:  # la superclasse qui definit le Monde
+    def __init__(self, taille):
+        self.taille = taille  # Taille d'1 cote, car le Monde est carre
+        self.nbPoissons = taille * taille  # nb Poisson = aire du Monde
+        self.ListePoisson = []  # Contient les Poisson
+        self.nombreMorts = 0  # Compteur de morts
+        self.mortsTotaux = []  # Liste les Poisson morts
         # Creation des poissons
-        for a in range(self.taille):
-            for b in range(self.taille):
+        # Cree une liste de 2 a self.nbPoissons+2 soit de nbPoissons
+        NombreListe = [i for i in range(2, self.nbPoissons+2)]
+        for x in range(self.taille):  # Pour chaque ligne
+            for y in range(self.taille):  # Pour chaque colone
+                # Choisit un nombre au hasard dans NombreListe
                 nombre = random.choice(NombreListe)
-                ListePoisson.append(Poisson(a, b, nombre))
+                # Cree un poisson avec ses coordonnees et un numero unique
+                self.ListePoisson.append(Poisson(x, y, nombre))
+                # Supprime le nombre attribue au poisson
                 NombreListe.remove(nombre)
 
-    def deplacer(self):
-        for i in ListePoisson:
-            # print('1 : ', i.x, i.y)
-            i.x = (random.randint(-1, 1) + i.x) % 10
-            i.y = (random.randint(-1, 1) + i.y) % 10
-            # print('2 : ', i.x, i.y)
+    def deplacer(self):  # Permet de faire se déplacer les poissons
+        for i in self.ListePoisson:  # Pour chaque Poisson
+            # Change x et son y du Poisson
+            i.x = (random.randint(-1, 1) + i.x) % self.taille
+            i.y = (random.randint(-1, 1) + i.y) % self.taille
 
-    def affichage(self):
-        tableauMonde = []
-        header = [
-            '//',
-            '\033[32m0\033[0m',
-            '\033[32m1\033[0m',
-            '\033[32m2\033[0m',
-            '\033[32m3\033[0m',
-            '\033[32m4\033[0m',
-            '\033[32m5\033[0m',
-            '\033[32m6\033[0m',
-            '\033[32m7\033[0m',
-            '\033[32m8\033[0m',
-            '\033[32m9\033[0m'
-        ]
-        # Pour chaque Colone
-        for i in range(self.taille):
-            listCol = ['\033[32m'+str(i)+'\033[0m']
+    def affichage(self):  # Affichage pour le debogage
+        tableauMonde = []  # Tableau pour utiliser la fonction tabulate
+        # Pour chaque ligne
+        for y in range(self.taille):
+            poissonsLigne = []  # Contient les Poissons de la ligne y
             # Pour chaque Case
-            for j in range(self.taille):
-                placeContainer = ''
-                listPoissCase = []
-                for p in ListePoisson:
-                    if p.x == j and p.y == i:
-                        listPoissCase.append(p.nombre)
-                if listPoissCase == []:
-                    placeContainer += '\033[35m_\033[0m'
+            for x in range(self.taille):
+                placeContainer = ''  # String qui stocke les poissons d'1 case
+                listePoissCase = []  # Liste qui stocke les poisson d'1 case
+                # Cette methode permet de verifier qu'il y a 1+ Poisson sur la
+                # case et de retourner '_' si il n'y en a pas ainsi que de
+                # retourner les Poisson sans les '[]' des listes
+                for p in self.ListePoisson:  # Pour chaque Poisson
+                    if p.x == x and p.y == y:  # Si coord Poisson == coord Case
+                        # Ajoute les Poisson de la case
+                        listePoissCase.append(p.nombre)
+                if listePoissCase == []:  # Si pas de poisson dans la case
+                    placeContainer += '\033[35m_\033[0m'  # Met un '_' violet
                 else:
-                    listPoissCase = sorted(listPoissCase)
-                    for chfr in listPoissCase:
-                        if chfr == listPoissCase[-1]:
-                            placeContainer += str(chfr)
-                        else:
-                            placeContainer += str(chfr) + ', '
-                listCol.append(placeContainer)
-            tableauMonde.append(listCol)
+                    # Trie Poisson dans l'ordre croissant pour + de lisibilite
+                    listePoissCase = sorted(listePoissCase)
+                    for poisson in listePoissCase:  # Pour chaque Poisson
+                        # Si le Poisson est le dernier
+                        if poisson == listePoissCase[-1]:
+                            placeContainer += str(poisson)
+                        else:  # Sinon ajoute ', ' derriere le Poisson
+                            placeContainer += str(poisson) + ', '
+                # Ajoute les Poisson a la liste de la ligne
+                poissonsLigne.append(placeContainer)
+            # Ajoute la ligne dans le tableau
+            tableauMonde.append(poissonsLigne)
+        # Affiche le tableau
+        print(tabulate(tableauMonde, tablefmt='grid'))
+        print('Morts : ', self.nombreMorts, '\n')  # Affiche les Poisson morts
 
-        print(tabulate(tableauMonde, header, tablefmt='grid', numalign='left'))
-        print('Morts : ', self.nombreMorts, '\n')
+    def bataille(self):  # Gere les conflicts entre les Poisson d'1 meme case
+        # print('ko :')  # DEBUG
+        koRound = []  # Liste les Poisson ko a la fin du round/bataille
+        for y in range(self.taille):
+            for x in range(self.taille):
+                listePoissCase = []  # Liste qui stocke les poisson d'1 case
+                for p in self.ListePoisson:
+                    if p.x == x and p.y == y:  # Si coord Poisson == coord Case
+                        # Ajoute les Poisson de la case
+                        listePoissCase.append(p.nombre)
+                # Combat seulement si il y au moins 2 Poisson dans la case
+                if len(listePoissCase) > 1:
+                    # Trie les Poisson dans l'ordre croissant pour simplifier
+                    listePoissCase = sorted(listePoissCase)
+                    koCase = []  # liste les ko pour la case actuelle
 
-    def bataille(self):
-        print('ko :')
-        ko = []
-        for i in range(self.taille):
-            for j in range(self.taille):
-                listTemp = []
-                for p in ListePoisson:
-                    if p.x == j and p.y == i:
-                        listTemp.append(p.nombre)
-                if not(listTemp == []) and len(listTemp) > 1:
-                    listTemp = sorted(listTemp)
-                    koTemp = []
-
-                    for divPos, div in enumerate(listTemp[:-1]):
-                        for m in listTemp[divPos+1:]:
-                            if m % div == 0 and not(m in ko):
-                                koTemp.append(m)
-                                ko.append(m)
-                                self.mortsTotaux.append(m)
-        print('Total :', len(ko), '||', ko, '\n')
+                    # Ici on fait cmobatre chaque poisson entre eux une seule
+                    # fois. Par ex pour 3 Poisson : 1 vs 2 || 1 vs 3 && 2 vs 3
+                    # On prend tous les Poisson SAUF le dernier -> '[:-1]'
+                    for aPos, a in enumerate(listePoissCase[:-1]):
+                        for b in listePoissCase[aPos+1:]:
+                            # Si a % b == 0 alors b est divisible par a
+                            # On ajoute b aux ko
+                            if b % a == 0 and not(b in koCase):
+                                koCase.append(b)
+                                koRound.append(b)
+                                self.mortsTotaux.append(b)
+        # print('Total :', len(koRound), '||', koRound, '\n')  # DEBUG
 
         # Tuer les poissons
-        for i in ko:
-            ListePoisson.remove(next(x for x in ListePoisson if x.nombre == i))
-        self.nombreMorts += len(ko)
+        for i in koRound:
+            toRemove = next(x for x in self.ListePoisson if x.nombre == i)
+            self.ListePoisson.remove(toRemove)
+        self.nombreMorts += len(koRound)
+
+    def renvoi(self):
+        listeNum = []
+        for i in self.ListePoisson:
+            listeNum.append(i.nombre)
+        return listeNum, self.mortsTotaux
 
 
 # **** FONCTIONS ****
 def cls(): print('\n' * 10)
 
 
-# **** CODE ****
-Terrain = Monde(10, 100)
-Terrain.affichage()
+def execPoisson(tailleMonde=5, nombrePoissons=25, nombreRep=5):
+    zone = Monde(tailleMonde, nombrePoissons)
+    rep = 0
+    while rep < nombreRep:
+        rep += 1
+        zone.deplacer()
+        zone.bataille()
+    return zone.renvoi()
 
-print("DEPART\n_________________\n")
-sleep(1)
 
-while rep < 5:
-    cls()
-    rep += 1
-    print('/\\/\\/\\/\\/\\/\\/\\/ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\/')
-    Terrain.deplacer()
-    Terrain.bataille()
-    Terrain.affichage()
-    rep += 1
-    sleep(3)
+def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
+    zone = Monde(tailleMonde)
+    zone.affichage()
+    print("DEPART\n_________________\n")
+    rep = 0
+    while rep < nombreRep:
+        sleep(sleepTime)
+        cls()
+        rep += 1
+        print('/\\/\\/\\/\\/\\/\\/\\ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\')
+        zone.deplacer()
+        zone.bataille()
+        zone.affichage()
 
-print('Liste morts : ', Terrain.mortsTotaux, '\nNombre de tours : ', rep)
+    print('Liste morts : ', zone.mortsTotaux, '\nNombre de tours : ', rep)
+
+
+# **** SCRIPT ****
+
+testLP = execPoissonAff()
+# print(testLP, '\n', testMT)
