@@ -1,16 +1,10 @@
 import random
 import pygame
 from pygame.locals import *
-from time import sleep
 
 
 
 #----- VARIABLES -----#
-
-nGrandCycle = 0
-grandCycle = [0 for _ in range(100)] # cree une liste de 100 zeros
-
-
 
 Size=Widght,height =800 , 630 #Taille de l'ecran en pixels
 tailleCase=((height-(2*10))/10) #Taille d'une case en pixel
@@ -48,10 +42,6 @@ class Poisson:
         self.x = x #Coordonne x du poisson
         self.y = y #Coordonne y du poisson
         self.nombre = nombre #nombre du poisson
-
-    def deplacer(self):
-        self.x += (EcartCase * random.randint(-1, 1))
-        self.y += (EcartCase * random.randint(-1, 1))
 
 
 #Class Monde Creations de la grille et gestions de la grille
@@ -112,29 +102,10 @@ pygame.mouse.set_cursor(*pygame.cursors.broken_x)
 
 salut=True
 while salut:
-    # Initialisation de la fenetre et des poissons
     Display.fill((0, 0, 0))
     Terrain.CréationMonde()
 
-
-    """while 1 in grandCycle:
-        for i in range(100):
-            Poisson.deplacer()
-
-
-
-    nGrandCycle += 1"""
-    sleep(0)
-
-    for n in range(len(ListePoisson)):
-        ListePoisson[n].deplacer()
-    sleep(0.3)
-
-
-
-
-
-    for event in pygame.event.get(): # pour chaque evenement donner
+    for event in pygame.event.get(): # pour chaque évenement donner
         if event.type == pygame.QUIT:
             salut= False
     pygame.display.update()

@@ -3,11 +3,6 @@ from time import sleep
 from tabulate import tabulate  # Affichage du tableau
 
 
-#  ██████ ██       █████  ███████ ███████ ███████ ███████
-# ██      ██      ██   ██ ██      ██      ██      ██
-# ██      ██      ███████ ███████ ███████ █████   ███████
-# ██      ██      ██   ██      ██      ██ ██           ██
-#  ██████ ███████ ██   ██ ███████ ███████ ███████ ███████
 
 class Poisson:  # La classe qui definit les Poisson
     def __init__(self, x, y, nombre):
@@ -28,12 +23,6 @@ class Cellule:  # Restes de Marco
         print("Je suis pelle")
 
 
-# ███    ███  ██████  ███    ██ ██████  ███████
-# ████  ████ ██    ██ ████   ██ ██   ██ ██
-# ██ ████ ██ ██    ██ ██ ██  ██ ██   ██ █████
-# ██  ██  ██ ██    ██ ██  ██ ██ ██   ██ ██
-# ██      ██  ██████  ██   ████ ██████  ███████
-
 class Monde:  # la superclasse qui definit le Monde
     def __init__(self, taille):
         self.taille = taille  # Taille d'1 cote, car le Monde est carre
@@ -41,6 +30,8 @@ class Monde:  # la superclasse qui definit le Monde
         self.ListePoisson = []  # Contient les Poisson
         self.nombreMorts = 0  # Compteur de morts
         self.mortsTotaux = []  # Liste les Poisson morts
+        self.rencontre = 0
+
         # Creation des poissons
         # Cree une liste de 2 a self.nbPoissons+2 soit de nbPoissons
         NombreListe = [i for i in range(2, self.nbPoissons+2)]
@@ -59,7 +50,7 @@ class Monde:  # la superclasse qui definit le Monde
             i.x = (random.randint(-1, 1) + i.x) % self.taille
             i.y = (random.randint(-1, 1) + i.y) % self.taille
 
-    def affichage(self):  # Affichage pour le debogage
+    def affichage(self, koR):  # Affichage pour le debogage
         tableauMonde = []  # Tableau pour utiliser la fonction tabulate
         # Pour chaque ligne
         for y in range(self.taille):
@@ -92,7 +83,7 @@ class Monde:  # la superclasse qui definit le Monde
             tableauMonde.append(poissonsLigne)
         # Affiche le tableau
         print(tabulate(tableauMonde, tablefmt='grid'))
-        print('Morts : ', self.nombreMorts, '\n')  # Affiche les Poisson morts
+        print('Morts du tour : ', koR, '\n')  # Affiche les Poissons morts
 
     def bataille(self):  # Gere les conflicts entre les Poisson d'1 meme case
         # print('ko :')  # DEBUG
@@ -110,7 +101,7 @@ class Monde:  # la superclasse qui definit le Monde
                     listePoissCase = sorted(listePoissCase)
                     koCase = []  # liste les ko pour la case actuelle
 
-                    # Ici on fait cmobatre chaque poisson entre eux une seule
+                    # Ici on fait combatre chaque poisson entre eux une seule
                     # fois. Par ex pour 3 Poisson : 1 vs 2 || 1 vs 3 && 2 vs 3
                     # On prend tous les Poisson SAUF le dernier -> '[:-1]'
                     for aPos, a in enumerate(listePoissCase[:-1]):
@@ -121,7 +112,9 @@ class Monde:  # la superclasse qui definit le Monde
                                 koCase.append(b)
                                 koRound.append(b)
                                 self.mortsTotaux.append(b)
-        # print('Total :', len(koRound), '||', koRound, '\n')  # DEBUG
+                            self.rencontre+=1
+
+        return len(koRound)
 
         # Tuer les poissons
         for i in koRound:
@@ -145,8 +138,8 @@ class Monde:  # la superclasse qui definit le Monde
 def cls(): print('\n' * 10)
 
 
-def execPoisson(tailleMonde=5, nombrePoissons=25, nombreRep=5):
-    zone = Monde(tailleMonde, nombrePoissons)
+def execPoisson(tailleMonde=5, nombreRep=5):
+    zone = Monde(tailleMonde)
     rep = 0
     while rep < nombreRep:
         rep += 1
@@ -157,7 +150,7 @@ def execPoisson(tailleMonde=5, nombrePoissons=25, nombreRep=5):
 
 def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
     zone = Monde(tailleMonde)
-    zone.affichage()
+    zone.affichage(koR=0)
     print("DEPART\n_________________\n")
     rep = 0
     while rep < nombreRep:
@@ -166,13 +159,14 @@ def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
         rep += 1
         print('/\\/\\/\\/\\/\\/\\/\\ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\')
         zone.deplacer()
-        zone.bataille()
-        zone.affichage()
 
-    print('Liste morts : ', zone.mortsTotaux, '\nNombre de tours : ', rep)
+        ko = zone.bataille()
+        zone.affichage(koR=ko)
+
+    print('Nombre de rencontre : ', zone.rencontre)
 
 
 # **** SCRIPT ****
 
-testLP = execPoissonAff()
+testLP = execPoissonAff(10,100,0.01)
 # print(testLP, '\n', testMT)
