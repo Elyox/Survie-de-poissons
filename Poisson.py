@@ -34,6 +34,8 @@ class Monde:  # la superclasse qui definit le Monde
         self.ListePoisson = []  # Contient les Poisson
         self.nombreMorts = 0  # Compteur de morts
         self.mortsTotaux = []  # Liste les Poisson morts
+        self.rencontre = 0
+
         # Creation des poissons
         # Cree une liste de 2 a self.nbPoissons+2 soit de nbPoissons
         NombreListe = [i for i in range(2, self.nbPoissons+2)]
@@ -107,7 +109,7 @@ class Monde:  # la superclasse qui definit le Monde
                     listePoissCase = sorted(listePoissCase)
                     koCase = []  # liste les ko pour la case actuelle
 
-                    # Ici on fait cmobatre chaque poisson entre eux une seule
+                    # Ici on fait combatre chaque poisson entre eux une seule
                     # fois. Par ex pour 3 Poisson : 1 vs 2 || 1 vs 3 && 2 vs 3
                     # On prend tous les Poisson SAUF le dernier -> '[:-1]'
                     for aPos, a in enumerate(listePoissCase[:-1]):
@@ -175,10 +177,13 @@ def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
         ko = zone.bataille()
         zone.affichage(ko)
 
-    print('Liste morts : ', zone.mortsTotaux, '\nNombre de tours : ', rep)
+        ko = zone.bataille()
+        zone.affichage(koR=ko)
+
+    print('Nombre de rencontre : ', zone.rencontre)
 
 
 # **** SCRIPT ****
 
-testLP = execPoissonAff(3, 100, 0.01)
-# print(testLP)
+testLP = execPoissonAff(10,100,0.01)
+# print(testLP, '\n', testMT)
