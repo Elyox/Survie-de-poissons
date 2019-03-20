@@ -3,17 +3,14 @@ from time import sleep
 from tabulate import tabulate  # Affichage du tableau
 
 
-#  ██████ ██       █████  ███████ ███████ ███████ ███████
-# ██      ██      ██   ██ ██      ██      ██      ██
-# ██      ██      ███████ ███████ ███████ █████   ███████
-# ██      ██      ██   ██      ██      ██ ██           ██
-#  ██████ ███████ ██   ██ ███████ ███████ ███████ ███████
+#  CLASSES
 
 class Poisson:  # La classe qui definit les Poisson
     def __init__(self, x, y, nombre):
         self.x = x
         self.y = y
         self.nombre = nombre
+        self.deplacements = 0
 
     # Definit comment comparer les Poissons entre eux
     def __lt__(self, other):  # less than
@@ -28,11 +25,7 @@ class Cellule:  # Restes de Marco
         print("Je suis pelle")
 
 
-# ███    ███  ██████  ███    ██ ██████  ███████
-# ████  ████ ██    ██ ████   ██ ██   ██ ██
-# ██ ████ ██ ██    ██ ██ ██  ██ ██   ██ █████
-# ██  ██  ██ ██    ██ ██  ██ ██ ██   ██ ██
-# ██      ██  ██████  ██   ████ ██████  ███████
+# MONDE
 
 class Monde:  # la superclasse qui definit le Monde
     def __init__(self, taille):
@@ -53,13 +46,17 @@ class Monde:  # la superclasse qui definit le Monde
                 # Supprime le nombre attribue au poisson
                 NombreListe.remove(nombre)
 
-    def deplacer(self):  # Permet de faire se déplacer les poissons
+    def deplacer(self):
         for i in self.ListePoisson:  # Pour chaque Poisson
             # Change x et son y du Poisson
-            i.x = (random.randint(-1, 1) + i.x) % self.taille
-            i.y = (random.randint(-1, 1) + i.y) % self.taille
+            x = random.randint(-1, 1)
+            y = random.randint(-1, 1)
+            i.x = (x + i.x) % self.taille
+            i.y = (y + i.y) % self.taille
+            if x != 0 and y != 0:
+                i.deplacements += 1
 
-    def affichage(self):  # Affichage pour le debogage
+    def affichage(self, koRound):  # Affichage pour le debogage
         tableauMonde = []  # Tableau pour utiliser la fonction tabulate
         # Pour chaque ligne
         for y in range(self.taille):
@@ -92,7 +89,7 @@ class Monde:  # la superclasse qui definit le Monde
             tableauMonde.append(poissonsLigne)
         # Affiche le tableau
         print(tabulate(tableauMonde, tablefmt='grid'))
-        print('Morts : ', self.nombreMorts, '\n')  # Affiche les Poisson morts
+        print('Morts du tour : ', koRound, '\n')  # Affiche les Poisson morts
 
     def bataille(self):  # Gere les conflicts entre les Poisson d'1 meme case
         # print('ko :')  # DEBUG
@@ -117,36 +114,45 @@ class Monde:  # la superclasse qui definit le Monde
                         for b in listePoissCase[aPos+1:]:
                             # Si a % b == 0 alors b est divisible par a
                             # On ajoute b aux ko
-                            if b % a == 0 and not(b in koCase):
-                                koCase.append(b)
-                                koRound.append(b)
-                                self.mortsTotaux.append(b)
-        # print('Total :', len(koRound), '||', koRound, '\n')  # DEBUG
-
+                            if b in koCase:
+                                pass
+                            else:
+                                if b % a == 0:
+                                    koCase.append(b)
+                                    koRound.append(b)
+                                    self.mortsTotaux.append(b)
         # Tuer les poissons
         for i in koRound:
             toRemove = next(x for x in self.ListePoisson if x.nombre == i)
             self.ListePoisson.remove(toRemove)
         self.nombreMorts += len(koRound)
 
+        return len(koRound)
+
     def renvoi(self):
         listeNum = []
         for i in self.ListePoisson:
             listeNum.append(i.nombre)
-        return listeNum, self.mortsTotaux
+        return listeNum
 
 
-# ███████  ██████  ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
-# ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
-# █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████
-# ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
-# ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
+# FONCTIONS
 
 def cls(): print('\n' * 10)
 
 
-def execPoisson(tailleMonde=5, nombrePoissons=25, nombreRep=5):
-    zone = Monde(tailleMonde, nombrePoissons)
+def primeNumber(num):
+    if num > 1:
+        for i in range(2, num):
+            if num % i == 0:
+                return True
+                break
+            else:
+                return False
+
+
+def execPoisson(tailleMonde=5, nombreRep=5):
+    zone = Monde(tailleMonde)
     rep = 0
     while rep < nombreRep:
         rep += 1
@@ -157,7 +163,7 @@ def execPoisson(tailleMonde=5, nombrePoissons=25, nombreRep=5):
 
 def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
     zone = Monde(tailleMonde)
-    zone.affichage()
+    zone.affichage(0)
     print("DEPART\n_________________\n")
     rep = 0
     while rep < nombreRep:
@@ -166,13 +172,13 @@ def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
         rep += 1
         print('/\\/\\/\\/\\/\\/\\/\\ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\')
         zone.deplacer()
-        zone.bataille()
-        zone.affichage()
+        ko = zone.bataille()
+        zone.affichage(ko)
 
     print('Liste morts : ', zone.mortsTotaux, '\nNombre de tours : ', rep)
 
 
 # **** SCRIPT ****
 
-testLP = execPoissonAff()
-# print(testLP, '\n', testMT)
+testLP = execPoissonAff(3, 100, 0.01)
+# print(testLP)
