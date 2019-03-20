@@ -3,14 +3,18 @@ from time import sleep
 from tabulate import tabulate  # Affichage du tableau
 
 
-#  CLASSES
+#  ██████ ██       █████  ███████ ███████ ███████ ███████
+# ██      ██      ██   ██ ██      ██      ██      ██
+# ██      ██      ███████ ███████ ███████ █████   ███████
+# ██      ██      ██   ██      ██      ██ ██           ██
+#  ██████ ███████ ██   ██ ███████ ███████ ███████ ███████
+
 
 class Poisson:  # La classe qui definit les Poisson
     def __init__(self, x, y, nombre):
         self.x = x
         self.y = y
         self.nombre = nombre
-        self.deplacements = 0
 
     # Definit comment comparer les Poissons entre eux
     def __lt__(self, other):  # less than
@@ -25,7 +29,12 @@ class Cellule:  # Restes de Marco
         print("Je suis pelle")
 
 
-# MONDE
+# ███    ███  ██████  ███    ██ ██████  ███████
+# ████  ████ ██    ██ ████   ██ ██   ██ ██
+# ██ ████ ██ ██    ██ ██ ██  ██ ██   ██ █████
+# ██  ██  ██ ██    ██ ██  ██ ██ ██   ██ ██
+# ██      ██  ██████  ██   ████ ██████  ███████
+
 
 class Monde:  # la superclasse qui definit le Monde
     def __init__(self, taille):
@@ -35,6 +44,7 @@ class Monde:  # la superclasse qui definit le Monde
         self.nombreMorts = 0  # Compteur de morts
         self.mortsTotaux = []  # Liste les Poisson morts
         self.rencontre = 0
+        self.deplacements = 0
 
         # Creation des poissons
         # Cree une liste de 2 a self.nbPoissons+2 soit de nbPoissons
@@ -56,7 +66,7 @@ class Monde:  # la superclasse qui definit le Monde
             i.x = (x + i.x) % self.taille
             i.y = (y + i.y) % self.taille
             if x != 0 and y != 0:
-                i.deplacements += 1
+                self.deplacements += 1
 
     def affichage(self, koRound):  # Affichage pour le debogage
         tableauMonde = []  # Tableau pour utiliser la fonction tabulate
@@ -123,6 +133,7 @@ class Monde:  # la superclasse qui definit le Monde
                                     koCase.append(b)
                                     koRound.append(b)
                                     self.mortsTotaux.append(b)
+                            self.rencontre += 1
         # Tuer les poissons
         for i in koRound:
             toRemove = next(x for x in self.ListePoisson if x.nombre == i)
@@ -130,45 +141,87 @@ class Monde:  # la superclasse qui definit le Monde
         self.nombreMorts += len(koRound)
 
         return len(koRound)
+    # Renvoie liste des Poisson en vie + total de rencontres et de deplacements
 
-    def renvoi(self):
+    def renvoi(self, arg=0):
         listeNum = []
         for i in self.ListePoisson:
             listeNum.append(i.nombre)
-        return listeNum
+        if arg == 0:
+            return listeNum
+        else:
+            return listeNum, self.rencontre, self.deplacements
 
 
-# FONCTIONS
+# ███████  ██████  ███    ██  ██████ ████████ ██  ██████  ███    ██ ███████
+# ██      ██    ██ ████   ██ ██         ██    ██ ██    ██ ████   ██ ██
+# █████   ██    ██ ██ ██  ██ ██         ██    ██ ██    ██ ██ ██  ██ ███████
+# ██      ██    ██ ██  ██ ██ ██         ██    ██ ██    ██ ██  ██ ██      ██
+# ██       ██████  ██   ████  ██████    ██    ██  ██████  ██   ████ ███████
+
 
 def cls(): print('\n' * 10)
 
 
-def primeNumber(num):
-    if num > 1:
-        for i in range(2, num):
-            if num % i == 0:
-                return True
-                break
-            else:
-                return False
+def primeNumber(n):
+    '''check if integer n is a prime'''
+    # make sure n is a positive integer
+    n = abs(int(n))
+    # 0 and 1 are not primes
+    if n < 2:
+        return False
+    # 2 is the only even prime number
+    if n == 2:
+        return True
+    # all other even numbers are not primes
+    if not n & 1:
+        return False
+    # range starts with 3 and only needs to go up the squareroot of n
+    # for all odd numbers
+    for x in range(3, int(n**0.5)+1, 2):
+        if n % x == 0:
+            return False
+    return True
 
 
-def execPoisson(tailleMonde=5, nombreRep=5):
+def onlyPrimeNumber(liste):
+    onlyPrime = 0
+    for number in liste:
+        if not primeNumber(number):
+            onlyPrime += 1
+    if onlyPrime > 0:
+        return False
+    else:
+        return True
+
+
+# ███████ ██   ██ ███████  ██████     ██████   ██████  ██ ███████ ███████  ██████  ███    ██
+# ██       ██ ██  ██      ██          ██   ██ ██    ██ ██ ██      ██      ██    ██ ████   ██
+# █████     ███   █████   ██          ██████  ██    ██ ██ ███████ ███████ ██    ██ ██ ██  ██
+# ██       ██ ██  ██      ██          ██      ██    ██ ██      ██      ██ ██    ██ ██  ██ ██
+# ███████ ██   ██ ███████  ██████     ██       ██████  ██ ███████ ███████  ██████  ██   ████
+
+def execPoisson(tailleMonde=5):
     zone = Monde(tailleMonde)
+    queNombrePrimaire = False
     rep = 0
-    while rep < nombreRep:
+    while not queNombrePrimaire:
         rep += 1
         zone.deplacer()
         zone.bataille()
-    return zone.renvoi()
+        queNombrePrimaire = onlyPrimeNumber(zone.renvoi())
+
+    poissonsRestants, rencontre, deplacements = zone.renvoi(arg=1)
+    return rep, poissonsRestants, rencontre, deplacements
 
 
-def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
+def execPoissonAff(tailleMonde=5, sleepTime=1):
     zone = Monde(tailleMonde)
+    nombreCompose = True
+    rep = 0
     zone.affichage(0)
     print("DEPART\n_________________\n")
-    rep = 0
-    while rep < nombreRep:
+    while nombreCompose:
         sleep(sleepTime)
         cls()
         rep += 1
@@ -176,14 +229,12 @@ def execPoissonAff(tailleMonde=5, nombreRep=5, sleepTime=1):
         zone.deplacer()
         ko = zone.bataille()
         zone.affichage(ko)
+        nombreCompose = not onlyPrimeNumber(zone.renvoi())
 
-        ko = zone.bataille()
-        zone.affichage(koR=ko)
-
-    print('Nombre de rencontre : ', zone.rencontre)
-
+    poissonsRestants, rencontre, deplacements = zone.renvoi(arg=1)
+    return rep, poissonsRestants, rencontre, deplacements
 
 # **** SCRIPT ****
 
-testLP = execPoissonAff(10,100,0.01)
+# testLP = execPoissonAff(10, 100, 0.01)
 # print(testLP, '\n', testMT)
