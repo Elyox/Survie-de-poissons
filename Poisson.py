@@ -201,18 +201,27 @@ def onlyPrimeNumber(liste):
 # ██       ██ ██  ██      ██          ██      ██    ██ ██      ██      ██ ██    ██ ██  ██ ██
 # ███████ ██   ██ ███████  ██████     ██       ██████  ██ ███████ ███████  ██████  ██   ████
 
-def execPoisson(tailleMonde=5):
-    zone = Monde(tailleMonde)
-    queNombrePrimaire = False
-    rep = 0
-    while not queNombrePrimaire:
-        rep += 1
-        zone.deplacer()
-        zone.bataille()
-        queNombrePrimaire = onlyPrimeNumber(zone.renvoi())
+def execPoisson(repStat=1, tailleMonde=5, null=0):
+    listMondes = []
+    listRep, listPoissonsRestants = [], []
+    listRencontre, listDeplacements = [], []
+    for nbMonde in range(repStat):
+        listMondes.append(Monde(tailleMonde))
+    for each in listMondes:
+        queNombrePrimaire = False
+        rep = 0
+        while not queNombrePrimaire:
+            rep += 1
+            each.deplacer()
+            each.bataille()
+            queNombrePrimaire = onlyPrimeNumber(each.renvoi())
 
-    poissonsRestants, rencontre, deplacements = zone.renvoi(arg=1)
-    return rep, poissonsRestants, rencontre, deplacements
+        poissonsRestants, rencontre, deplacements = each.renvoi(arg=1)
+        listRep.append(rep)
+        listPoissonsRestants.append(poissonsRestants)
+        listRencontre.append(rencontre)
+        listDeplacements.append(deplacements)
+    return listRep, listPoissonsRestants, listRencontre, listDeplacements
 
 
 def execPoissonAff(tailleMonde=5, sleepTime=1):
