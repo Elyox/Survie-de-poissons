@@ -37,9 +37,9 @@ class Cellule:  # Restes de Marco
 
 
 class Monde:  # la superclasse qui definit le Monde
-    def __init__(self, taille):
+    def __init__(self, nbPoissons, taille):
         self.taille = taille  # Taille d'1 cote, car le Monde est carre
-        self.nbPoissons = taille * taille  # nb Poisson = aire du Monde
+        self.nbPoissons = nbPoissons  # nb Poisson = aire du Monde
         self.ListePoisson = []  # Contient les Poisson
         self.nombreMorts = 0  # Compteur de morts
         self.mortsTotaux = []  # Liste les Poisson morts
@@ -49,14 +49,15 @@ class Monde:  # la superclasse qui definit le Monde
         # Creation des poissons
         # Cree une liste de 2 a self.nbPoissons+2 soit de nbPoissons
         NombreListe = [i for i in range(2, self.nbPoissons+2)]
-        for x in range(self.taille):  # Pour chaque ligne
-            for y in range(self.taille):  # Pour chaque colone
-                # Choisit un nombre au hasard dans NombreListe
-                nombre = random.choice(NombreListe)
-                # Cree un poisson avec ses coordonnees et un numero unique
-                self.ListePoisson.append(Poisson(x, y, nombre))
-                # Supprime le nombre attribue au poisson
-                NombreListe.remove(nombre)
+        for i in range(self.nbPoissons):  # Pour le nb de Poissons
+            x = random.randint(0, self.taille)
+            y = random.randint(0, self.taille)
+            # Choisit un nombre au hasard dans NombreListe
+            nombre = random.choice(NombreListe)
+            # Cree un poisson avec ses coordonnees et un numero unique
+            self.ListePoisson.append(Poisson(x, y, nombre))
+            # Supprime le nombre attribue au poisson
+            NombreListe.remove(nombre)
 
     def deplacer(self):
         for i in self.ListePoisson:  # Pour chaque Poisson
@@ -201,12 +202,12 @@ def onlyPrimeNumber(liste):
 # ██       ██ ██  ██      ██          ██      ██    ██ ██      ██      ██ ██    ██ ██  ██ ██
 # ███████ ██   ██ ███████  ██████     ██       ██████  ██ ███████ ███████  ██████  ██   ████
 
-def execPoisson(repStat=1, tailleMonde=5, null=0):
+def execPoisson(repStat=1, tailleMonde=5, nbPoissons=10, null=0):
     listMondes = []
     listRep, listPoissonsRestants = [], []
     listRencontre, listDeplacements = [], []
     for nbMonde in range(repStat):
-        listMondes.append(Monde(tailleMonde))
+        listMondes.append(Monde(nbPoissons, tailleMonde))
     for each in listMondes:
         queNombrePrimaire = False
         rep = 0
@@ -224,24 +225,33 @@ def execPoisson(repStat=1, tailleMonde=5, null=0):
     return listRep, listPoissonsRestants, listRencontre, listDeplacements
 
 
-def execPoissonAff(tailleMonde=5, sleepTime=1):
-    zone = Monde(tailleMonde)
-    nombreCompose = True
-    rep = 0
-    zone.affichage(0)
-    print("DEPART\n_________________\n")
-    while nombreCompose:
-        sleep(sleepTime)
-        cls()
-        rep += 1
-        print('/\\/\\/\\/\\/\\/\\/\\ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\')
-        zone.deplacer()
-        ko = zone.bataille()
-        zone.affichage(ko)
-        nombreCompose = not onlyPrimeNumber(zone.renvoi())
+def execPoissonAff(repStat=1, tailleMonde=5, nbPoissons=10, sleepTime=1):
+    listMondes = []
+    listRep, listPoissonsRestants = [], []
+    listRencontre, listDeplacements = [], []
+    for nbMonde in range(repStat):
+        listMondes.append(Monde(nbPoissons, tailleMonde))
+    for each in listMondes:
+        nombreCompose = True
+        rep = 0
+        each.affichage(0)
+        print("DEPART\n_________________\n")
+        while nombreCompose:
+            sleep(sleepTime)
+            cls()
+            rep += 1
+            print('/\\/\\/\\/\\/\\/\\/\\ TOUR N° :', rep, ' /\\/\\/\\/\\/\\/\\/\\')
+            each.deplacer()
+            ko = each.bataille()
+            each.affichage(ko)
+            nombreCompose = not onlyPrimeNumber(each.renvoi())
 
-    poissonsRestants, rencontre, deplacements = zone.renvoi(arg=1)
-    return rep, poissonsRestants, rencontre, deplacements
+        poissonsRestants, rencontre, deplacements = each.renvoi(arg=1)
+        listRep.append(rep)
+        listPoissonsRestants.append(poissonsRestants)
+        listRencontre.append(rencontre)
+        listDeplacements.append(deplacements)
+    return listRep, listPoissonsRestants, listRencontre, listDeplacements
 
 # **** SCRIPT ****
 
